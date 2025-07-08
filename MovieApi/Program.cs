@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using MovieApi.Extensions;
 using MovieApi.Models;
 
 namespace MovieApi
@@ -33,6 +34,8 @@ namespace MovieApi
 
 
             app.MapControllers();
+
+            app.SeedData();
 
             app.Run();
         }
