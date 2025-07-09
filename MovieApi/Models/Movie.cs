@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewEngines;
-
-namespace MovieApi.Models
+﻿namespace MovieApi.Models
 {
     public class Movie
     {
