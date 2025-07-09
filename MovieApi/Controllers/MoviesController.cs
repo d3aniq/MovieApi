@@ -33,19 +33,6 @@ namespace MovieApi.Controllers
         }
 
         // GET /api/movies/{id}/details
-        //[HttpGet("{id}/details")]
-        //public async Task<ActionResult<Movie>> GetMovieDetails(int id)
-        //{
-        //    var movie = await _context.Movies
-        //        .Include(m => m.MovieActors)
-        //            .ThenInclude(ma => ma.Actor)
-        //        .Include(m => m.Reviews)
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-
-        //    if (movie == null) return NotFound();
-        //    return movie;
-        //}
-
         [HttpGet("{id}/details")]
         public async Task<ActionResult<MovieDetailDto>> GetMovieDetails(int id)
         {
@@ -63,25 +50,13 @@ namespace MovieApi.Controllers
                 Id = movie.Id,
                 Title = movie.Title,
                 ReleaseYear = movie.ReleaseYear,
-                //MovieDetails = new MovieDetailsDto
-                //{
-                //    Title = movie.Title,
-                //    ReleaseYear = movie.ReleaseYear
-                //},
 
                 MovieDetails = new MovieDetailsDto
                 {
                     Id = movie.Id,
-                    Genre = "Unknown", // <-- ersätt med korrekt värde om du har det
-                    Duration = 120     // <-- ersätt med korrekt värde om du har det
+                    Genre = "Unknown", 
+                    Duration = 120     
                 },
-
-
-                //Actors = movie.MovieActors.Select(ma => new ActorDto
-                //{
-                //    Id = ma.Actor.Id,
-                //    Name = ma.Actor.Name
-                //}).ToList(),
 
                 Actors = movie.MovieActors.Select(ma => new ActorDto
                 {
@@ -94,14 +69,12 @@ namespace MovieApi.Controllers
                 {
                     Id = r.Id,
                     Rating = r.Rating,
-                    Text = r.Comment // viktigt: använd 'Comment' eftersom 'Text' inte finns i modellen
+                    Text = r.Comment 
                 }).ToList()
             };
 
             return dto;
         }
-
-
 
         // POST /api/movies
         [HttpPost]

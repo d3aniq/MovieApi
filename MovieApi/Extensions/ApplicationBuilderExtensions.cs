@@ -10,7 +10,7 @@ namespace MovieApi.Extensions
             using var scope = app.ApplicationServices.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<MovieContext>();
 
-            context.Database.Migrate(); // säkerställ att databasen finns
+            context.Database.Migrate(); 
 
             if (!context.Movies.Any())
             {
