@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MovieApi.DTOs;
 using MovieApi.Models;
 
 namespace MovieApi.Controllers
@@ -32,8 +33,21 @@ namespace MovieApi.Controllers
         }
 
         // GET /api/movies/{id}/details
+        //[HttpGet("{id}/details")]
+        //public async Task<ActionResult<Movie>> GetMovieDetails(int id)
+        //{
+        //    var movie = await _context.Movies
+        //        .Include(m => m.MovieActors)
+        //            .ThenInclude(ma => ma.Actor)
+        //        .Include(m => m.Reviews)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+
+        //    if (movie == null) return NotFound();
+        //    return movie;
+        //}
+
         [HttpGet("{id}/details")]
-        public async Task<ActionResult<Movie>> GetMovieDetails(int id)
+        public async Task<ActionResult<MovieDetailDto>> GetMovieDetails(int id)
         {
             var movie = await _context.Movies
                 .Include(m => m.MovieActors)
@@ -41,9 +55,53 @@ namespace MovieApi.Controllers
                 .Include(m => m.Reviews)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (movie == null) return NotFound();
-            return movie;
+            if (movie == null)
+                return NotFound();
+
+            var dto = new MovieDetailDto
+            {
+                Id = movie.Id,
+                Title = movie.Title,
+                ReleaseYear = movie.ReleaseYear,
+                //MovieDetails = new MovieDetailsDto
+                //{
+                //    Title = movie.Title,
+                //    ReleaseYear = movie.ReleaseYear
+                //},
+
+                MovieDetails = new MovieDetailsDto
+                {
+                    Id = movie.Id,
+                    Genre = "Unknown", // <-- ersätt med korrekt värde om du har det
+                    Duration = 120     // <-- ersätt med korrekt värde om du har det
+                },
+
+
+                //Actors = movie.MovieActors.Select(ma => new ActorDto
+                //{
+                //    Id = ma.Actor.Id,
+                //    Name = ma.Actor.Name
+                //}).ToList(),
+
+                Actors = movie.MovieActors.Select(ma => new ActorDto
+                {
+                    Id = ma.Actor?.Id ?? 0, // 0 som fallback om Actor är null
+                    Name = ma.Actor?.Name ?? "Unknown" // fallback-namn
+                }).ToList(),
+
+
+                Reviews = movie.Reviews.Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    Rating = r.Rating,
+                    Text = r.Comment // viktigt: använd 'Comment' eftersom 'Text' inte finns i modellen
+                }).ToList()
+            };
+
+            return dto;
         }
+
+
 
         // POST /api/movies
         [HttpPost]
