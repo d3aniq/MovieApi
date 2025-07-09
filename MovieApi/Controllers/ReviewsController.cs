@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MovieApi.DTOs;
 using MovieApi.Models;
 
 namespace MovieApi.Controllers
@@ -26,5 +27,26 @@ namespace MovieApi.Controllers
 
             return Ok(movie.Reviews);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Review>> AddReviewToMovie(int movieId, ReviewDto reviewDto)
+        {
+            var movie = await _context.Movies.FindAsync(movieId);
+            if (movie == null) return NotFound();
+
+            var review = new Review
+            {
+                Comment = reviewDto.Text,
+                Rating = reviewDto.Rating,
+                MovieId = movieId
+            };
+
+            _context.Reviews.Add(review);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetReviewsForMovie), new { movieId = movieId }, review);
+        }
+
+
     }
 }
